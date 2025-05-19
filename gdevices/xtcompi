@@ -1,0 +1,2 @@
+g++ -shared -fPIC gmouse_xt.c -o libgmouse_xt.so -lX11 -lXtst
+g++ -shared -fPIC gkeyboard_xt.c -o libgkeyboard_xt.so -lX11 -lXtst

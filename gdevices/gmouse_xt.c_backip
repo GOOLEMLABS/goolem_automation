@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstring>
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/XTest.h>
+//https://www.x.org/releases/X11R7.5/doc/man/man3/XSendEvent.3.html
+
+
+void setPointerFocus(Display *display) {
+    printf("Setting the focus");
+    Window root = DefaultRootWindow(display);
+    Window returned_root, returned_child;
+    int root_x, root_y, win_x, win_y;
+    unsigned int mask;
+
+    XQueryPointer(display, root, &returned_root, &returned_child,
+                  &root_x, &root_y, &win_x, &win_y, &mask);
+
+    if (returned_child != None) {
+        XSetInputFocus(display, returned_child, RevertToPointerRoot, CurrentTime);
+        XFlush(display);
+    }
+}
+
+void sendMouseEvent(Display *display, unsigned int button, int isPress) {
+    printf("\n mouse event control %d %d \n",(button,isPress));
+    usleep(100000); 
+    setPointerFocus(display);
+    if (isPress==1)
+         {
+         printf("ButtonPress<<<<<<<<<<<<<",button);
+         XTestFakeButtonEvent(display, button, True, CurrentTime);
+         usleep(100000); 
+         XFlush(display);
+
+         }
+    else{
+        printf("\n<<<<<<<<<<<<ButtonRelease",button);
+        XTestFakeButtonEvent(display, button, False, CurrentTime);
+        usleep(100000); 
+        XFlush(display);
+    }
+    ;
+
+    //XTestFakeMotionEvent(display, -1, x, y, CurrentTime);
+
+
+
+
+}
+
+void moveMouse(Display *display, int x, int y) {
+
+
+    XTestFakeMotionEvent(display, -1, x, y, CurrentTime);
+    usleep(100000); 
+    XFlush(display);
+}
+
+
+
+extern "C" {
+
+   int mouse_move_extern(int _X, int _Y ){
+    Display *display;
+    display = XOpenDisplay(NULL);
+
+    if (!display) {
+        fprintf(stderr, "Unable to open display\n");
+        exit(EXIT_FAILURE);
+    }
+
+
+    printf("called mouse move\n");
+    printf("X %d",_X);
+    printf("Y %d",_Y);
+    moveMouse(display,_X,_Y);
+    printf("\nwaiting mouse move\n");
+    sleep(0.1);
+    XFlush(display);
+    XCloseDisplay(display);
+    return 0;
+    }
+
+    int mouse_event_extern(unsigned int _uiBUTTON,int _iISPRESS ){
+    Display *display = XOpenDisplay(NULL);
+    Window root = DefaultRootWindow(display);
+    root = DefaultRootWindow(display);
+    printf("\ncalled mouse event\n");
+    printf("ISPRESS CHECK %d",_iISPRESS);
+    
+    int screen = DefaultScreen(display);
+    printf("\n mouse event %d _BUTTON  ISPRESS %d \n",(_uiBUTTON,_iISPRESS));
+
+    if (!display) {
+        fprintf(stderr, "Unable to open display\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("\n Calling mouse event\n");
+
+    sendMouseEvent(display,_uiBUTTON,_iISPRESS); // Press left button
+    printf("\nwaiting mouse event 2\n");
+    printf("1");
+    usleep(100000); 
+    XFlush(display);
+    XCloseDisplay(display);
+    printf("\ncierre display\n");
+    return 0;
+    }
+
+
+
+
+
+
+
+}

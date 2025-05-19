@@ -1,0 +1,1 @@
+g++ -shared -fPIC gmouse_x11.c -o libgmouse_x11.so -lX11
