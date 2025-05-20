@@ -97,8 +97,17 @@ pip install -r requirements.txt
 
 Create a .env file with your OpenAI API key:
 
+
+
+
+
+
     OPENAI_API_KEY=your_key_here
 
 📝 License & Status
 PENDING
 This is an experimental research project and not intended for production use. Use responsibly on test systems only.
+
+
+About Developers and maintainer:
+just one , visit my linkedin profile Pedro Luis García or send me an email by contact
